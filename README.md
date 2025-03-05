@@ -36,22 +36,18 @@
         dev_ips:
           - 192.168.1.100
           - 192.168.1.101
-        dev_ansible_ssh_user: 
-		      - ansible
-		 - root
-
-1.	Display hostnames and IPs
-2.	Remove existing host entries for specified hosts
-3.	Add new host entries with hostname and IP
-4.	Clean up SSH config file formatting
+        dev_ansible_ssh_user:
+          - ansible
+          - root
+```
 
 ## Compatibility
 
 - Supports macOS and Linux
 - Flexible SSH user configuration
 - Tested on:
-	- macOS
-	- Debian
+  - macOS
+  - Debian
 
 ## Notes
 - Existing entries for specified hosts will be removed
