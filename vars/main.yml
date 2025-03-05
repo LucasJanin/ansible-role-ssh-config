@@ -1,0 +1,20 @@
+---
+# File: vars/main.yml
+# Description: Internal variables for SSH config role
+# Author: Lucas Janin
+# Date: 2025-03-02
+# These variables are internal to the role and should not be directly modified by users
+
+# Validation regex for hostnames
+_ssh_hostname_regex: '^[a-zA-Z0-9.-]+$'
+
+# Default SSH port
+_default_ssh_port: 22
+
+# SSH config block markers
+_ssh_config_begin_marker: '# BEGIN SSH CONFIG MANAGED BY ANSIBLE ROLE'
+_ssh_config_end_marker: '# END SSH CONFIG MANAGED BY ANSIBLE ROLE'
+
+# Default file permissions
+_ssh_dir_mode: '0700'
+_ssh_config_mode: '0600'

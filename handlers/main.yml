@@ -1,0 +1,10 @@
+---
+# File: handlers/main.yml
+# Description: Handlers for SSH config role
+# Author: Lucas Janin
+# Date: 2025-03-02
+
+- name: Display SSH config update status
+  ansible.builtin.debug:
+    msg: "SSH configuration has been updated successfully"
+  listen: ssh_config_updated

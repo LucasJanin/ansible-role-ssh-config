@@ -1,0 +1,40 @@
+---
+# File: meta/main.yml
+# Description: Role metadata for Ansible Galaxy
+# Author: Lucas Janin
+# Date: 2025-03-02
+
+galaxy_info:
+  role_name: ssh_config
+  author: Lucas Janin
+  description: Manages SSH configuration files for multiple hosts
+  company: lucasjanin.com
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: GenericLinux
+      versions:
+        - all
+    - name: GenericUNIX
+      versions:
+        - all
+    - name: MacOSX
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+  galaxy_tags:
+    - ssh
+    - configuration
+    - system
+    - networking
+    - security
+    - devops
+    - infrastructure
+
+dependencies: []

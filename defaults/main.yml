@@ -1,0 +1,18 @@
+---
+# File: defaults/main.yml
+# Description: Default variables for SSH config role
+# Author: Lucas Janin
+# Date: 2025-03-02
+
+# User and host configuration
+# These variables define where and for whom the SSH config will be modified
+user: "ansible"              # User whose SSH config will be modified
+host: "localhost"            # Host where the changes will be applied
+home: "/home/ansible/"       # Home directory of the user
+ssh_config: "/.ssh/config"   # Path to SSH config file relative to home directory
+
+# Host configuration lists
+# These lists must be of equal length and correspond to each other by index
+dev_hostnames: []            # List of SSH host aliases to configure
+dev_ips: []                  # List of IP addresses corresponding to hostnames
+dev_ansible_ssh_user: []     # List of SSH users for each host

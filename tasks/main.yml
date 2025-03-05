@@ -1,0 +1,96 @@
+---
+# File: tasks/main.yml
+# Description: Tasks for generating and managing SSH config file
+# Author: Lucas Janin
+# Date: 2025-02-22
+
+- name: Prepare SSH config environment
+  delegate_to: "{{ host }}"
+  become_user: "{{ user }}"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: "{{ home }}{{ ssh_config | dirname }}", state: directory, mode: '0700' }
+    - { path: "{{ home }}{{ ssh_config }}", state: touch, mode: '0600' }
+  tags:
+    - ssh_config
+    - setup
+
+- name: Read current SSH config file
+  delegate_to: "{{ host }}"
+  become_user: "{{ user }}"
+  ansible.builtin.slurp:
+    src: "{{ home }}{{ ssh_config }}"
+  register: ssh_config_content
+  tags:
+    - ssh_config
+    - read
+
+- name: Parse SSH config file
+  delegate_to: "{{ host }}"
+  become_user: "{{ user }}"
+  ansible.builtin.set_fact:
+    ssh_config_lines: "{{ (ssh_config_content['content'] | b64decode).split('\n') }}"
+    has_ansible_block: "{{ (ssh_config_content['content'] | b64decode) is search('# BEGIN SSH CONFIG MANAGED BY ANSIBLE ROLE') }}"
+  tags:
+    - ssh_config
+    - parse
+
+- name: Extract non-managed content (before Ansible block)
+  delegate_to: "{{ host }}"
+  become_user: "{{ user }}"
+  ansible.builtin.set_fact:
+    non_managed_content: "{{ ssh_config_content['content'] | b64decode | regex_replace('(?s)# BEGIN SSH CONFIG MANAGED BY ANSIBLE ROLE.*', '') }}"
+  when: has_ansible_block
+  tags:
+    - ssh_config
+    - extract
+
+- name: Use full content if no Ansible block exists
+  delegate_to: "{{ host }}"
+  become_user: "{{ user }}"
+  ansible.builtin.set_fact:
+    non_managed_content: "{{ ssh_config_content['content'] | b64decode }}"
+  when: not has_ansible_block
+  tags:
+    - ssh_config
+    - extract
+
+- name: Remove host entries from non-managed content
+  delegate_to: "{{ host }}"
+  become_user: "{{ user }}"
+  ansible.builtin.set_fact:
+    non_managed_content: "{{ non_managed_content | regex_replace('(?m)^Host\\s+' + item + '\\s*\\n(\\s+.*\\n)*', '') }}"
+  loop: "{{ dev_hostnames }}"
+  when: dev_hostnames | length > 0
+  tags:
+    - ssh_config
+    - clean
+
+- name: Generate new SSH config content
+  delegate_to: "{{ host }}"
+  become_user: "{{ user }}"
+  ansible.builtin.copy:
+    content: |-
+      {{ non_managed_content | regex_replace('\n+$', '') }}
+
+      # BEGIN SSH CONFIG MANAGED BY ANSIBLE ROLE
+
+      {% if dev_hostnames | length > 0 %}
+      {% for hostname in dev_hostnames %}
+      Host {{ hostname }}
+          HostName {{ dev_ips[loop.index0] }}
+          User {{ dev_ansible_ssh_user[loop.index0] }}
+
+      {% endfor %}
+      {% endif %}
+      # END SSH CONFIG MANAGED BY ANSIBLE ROLE
+    dest: "{{ home }}{{ ssh_config }}"
+    mode: '0600'
+  register: ssh_config_update
+  notify: ssh_config_updated
+  tags:
+    - ssh_config
+    - generate
