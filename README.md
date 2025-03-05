@@ -36,12 +36,9 @@
         dev_ips:
           - 192.168.1.100
           - 192.168.1.101
-        ssh_user: 
-		 - ansible
+        dev_ansible_ssh_user: 
+		      - ansible
 		 - root
-```
-
-## Tasks Performed
 
 1.	Display hostnames and IPs
 2.	Remove existing host entries for specified hosts
