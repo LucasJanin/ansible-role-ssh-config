@@ -62,14 +62,14 @@
   delegate_to: "{{ host }}"
   become_user: "{{ user }}"
   ansible.builtin.set_fact:
-    non_managed_content: "{{ non_managed_content | regex_replace('(?m)^Host\\s+' + item + '\\s*\\n(\\s+.*\\n)*', '') }}"
-  loop: "{{ dev_hostnames }}"
-  when: dev_hostnames | length > 0
+    non_managed_content: "{{ non_managed_content | regex_replace('(?m)^Host\\\\s+' + item + '\\\\s*\\\\n(\\\\s+.*\\\\n)*', '') }}"
+  loop: "{{ dev_hostnames | default([]) }}"
+  when: dev_hostnames is defined and dev_hostnames | length > 0
   tags:
     - ssh_config
     - clean
 
-- name: Generate new SSH config content
+- name: Generate new SSH config content for {{ host }}
   delegate_to: "{{ host }}"
   become_user: "{{ user }}"
   ansible.builtin.copy:
@@ -78,11 +78,11 @@
 
       # BEGIN SSH CONFIG MANAGED BY ANSIBLE ROLE
 
-      {% if dev_hostnames | length > 0 %}
+      {% if dev_hostnames is defined and dev_hostnames | length > 0 %}
       {% for hostname in dev_hostnames %}
       Host {{ hostname }}
-          HostName {{ dev_ips[loop.index0] }}
-          User {{ dev_ansible_ssh_user[loop.index0] }}
+          HostName {{ dev_ips[loop.index0] | default('') }}
+          User {{ dev_ansible_ssh_users[loop.index0] | default('') }}
 
       {% endfor %}
       {% endif %}
