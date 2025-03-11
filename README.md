@@ -1,7 +1,9 @@
 # SSH Configuration Management Role
 
 ## Overview
- 
+
+Automates the management of SSH configuration files, specifically designed for adding and managing host entries on a host
+
 ## Features
 - Automatically add new SSH host entries
 - Preserve existing non-managed SSH configurations
@@ -17,7 +19,7 @@
 | Variable | Type | Description | Default |
 |----------|------|-------------|---------|
 | `user` | User for which to configure SSH | `ansible` |
-| `host` | Host on which to execute tasks | `localhost` |
+| `host` | Host on which to confgure the ssh config | `localhost` |
 | `home` | User's home directory | `/home/ansible/` |
 | `ssh_config` | Relative path to SSH config file | `/.ssh/config` |
 | `dev_hostnames` | List of hostnames to configure | `[]` |
@@ -46,7 +48,7 @@
 - Supports macOS and Linux
 - Flexible SSH user configuration
 - Tested on:
-  - macOS
+  - MacOS
   - Debian
 
 ## Notes
