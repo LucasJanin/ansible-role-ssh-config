@@ -11,6 +11,9 @@ Automates the management of SSH configuration files, specifically designed for a
 - Support for multiple hosts and IP addresses
 - Clean formatting of SSH config files
 
+## Screenshot
+![SSH Config](images/ssh-config.png)
+
 ## Requirements
 - Ansible 2.9+
 - macOS or Unix-like system with `sed` and `lineinfile` support
