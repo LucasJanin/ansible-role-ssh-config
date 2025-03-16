@@ -82,7 +82,7 @@
       {% for hostname in dev_hostnames %}
       Host {{ hostname }}
           HostName {{ dev_ips[loop.index0] | default('') }}
-          User {{ dev_ansible_ssh_users[loop.index0] | default('') }}
+          User {{ dev_ansible_users[loop.index0] | default('') }}
 
       {% endfor %}
       {% endif %}

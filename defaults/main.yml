@@ -15,4 +15,4 @@ ssh_config: "/.ssh/config"   # Path to SSH config file relative to home director
 # These lists must be of equal length and correspond to each other by index
 dev_hostnames: []            # List of SSH host aliases to configure
 dev_ips: []                  # List of IP addresses corresponding to hostnames
-dev_ansible_ssh_user: []     # List of SSH users for each host
+dev_ansible_users: []        # List of SSH users for each host
