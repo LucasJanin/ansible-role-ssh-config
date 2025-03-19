@@ -2,7 +2,7 @@
 # File: tasks/main.yml
 # Description: Tasks for generating and managing SSH config file
 # Author: Lucas Janin
-# Date: 2025-02-22
+# Date: 2025-03-19
 
 - name: Prepare SSH config environment
   delegate_to: "{{ host }}"
@@ -62,9 +62,9 @@
   delegate_to: "{{ host }}"
   become_user: "{{ user }}"
   ansible.builtin.set_fact:
-    non_managed_content: "{{ non_managed_content | regex_replace('(?m)^Host\\\\s+' + item + '\\\\s*\\\\n(\\\\s+.*\\\\n)*', '') }}"
-  loop: "{{ dev_hostnames | default([]) }}"
-  when: dev_hostnames is defined and dev_hostnames | length > 0
+    non_managed_content: "{{ non_managed_content | regex_replace('(?m)^Host\\s+' + item + '\\s*\\n(\\s+.*\\n)*', '') }}"
+  loop: "{{ ansible_play_hosts_all | default([]) }}"
+  when: ansible_play_hosts_all is defined and ansible_play_hosts_all | length > 0
   tags:
     - ssh_config
     - clean
@@ -72,21 +72,8 @@
 - name: Generate new SSH config content for {{ host }}
   delegate_to: "{{ host }}"
   become_user: "{{ user }}"
-  ansible.builtin.copy:
-    content: |-
-      {{ non_managed_content | regex_replace('\n+$', '') }}
-
-      # BEGIN SSH CONFIG MANAGED BY ANSIBLE ROLE
-
-      {% if dev_hostnames is defined and dev_hostnames | length > 0 %}
-      {% for hostname in dev_hostnames %}
-      Host {{ hostname }}
-          HostName {{ dev_ips[loop.index0] | default('') }}
-          User {{ dev_ansible_users[loop.index0] | default('') }}
-
-      {% endfor %}
-      {% endif %}
-      # END SSH CONFIG MANAGED BY ANSIBLE ROLE
+  ansible.builtin.template:
+    src: ssh_config.j2
     dest: "{{ home }}{{ ssh_config }}"
     mode: '0600'
   register: ssh_config_update

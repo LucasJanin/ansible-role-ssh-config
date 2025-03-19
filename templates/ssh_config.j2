@@ -1,0 +1,13 @@
+{{ non_managed_content | regex_replace('\n+$', '') }}
+
+# BEGIN SSH CONFIG MANAGED BY ANSIBLE ROLE
+
+{% if ansible_play_hosts_all is defined and ansible_play_hosts_all | length > 0 %}
+{% for hostname in ansible_play_hosts_all %}
+Host {{ hostname }}
+    HostName {{ hostvars[hostname].ansible_host | default('') }}
+    User {{ hostvars[hostname].ansible_user | default('') }}
+
+{% endfor %}
+{% endif %}
+# END SSH CONFIG MANAGED BY ANSIBLE ROLE
