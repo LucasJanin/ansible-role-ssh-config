@@ -6,6 +6,7 @@
 
 - name: Prepare SSH config environment
   delegate_to: "{{ host }}"
+  become: true
   become_user: "{{ user }}"
   ansible.builtin.file:
     path: "{{ item.path }}"
@@ -20,6 +21,7 @@
 
 - name: Read current SSH config file
   delegate_to: "{{ host }}"
+  become: true
   become_user: "{{ user }}"
   ansible.builtin.slurp:
     src: "{{ home }}{{ ssh_config }}"
@@ -30,6 +32,7 @@
 
 - name: Parse SSH config file
   delegate_to: "{{ host }}"
+  become: true
   become_user: "{{ user }}"
   ansible.builtin.set_fact:
     ssh_config_lines: "{{ (ssh_config_content['content'] | b64decode).split('\n') }}"
@@ -40,6 +43,7 @@
 
 - name: Extract non-managed content (before Ansible block)
   delegate_to: "{{ host }}"
+  become: true
   become_user: "{{ user }}"
   ansible.builtin.set_fact:
     non_managed_content: "{{ ssh_config_content['content'] | b64decode | regex_replace('(?s)# BEGIN SSH CONFIG MANAGED BY ANSIBLE ROLE.*', '') }}"
@@ -50,6 +54,7 @@
 
 - name: Use full content if no Ansible block exists
   delegate_to: "{{ host }}"
+  become: true
   become_user: "{{ user }}"
   ansible.builtin.set_fact:
     non_managed_content: "{{ ssh_config_content['content'] | b64decode }}"
@@ -60,6 +65,7 @@
 
 - name: Remove host entries from non-managed content
   delegate_to: "{{ host }}"
+  become: true
   become_user: "{{ user }}"
   ansible.builtin.set_fact:
     non_managed_content: "{{ non_managed_content | regex_replace('(?m)^Host\\s+' + item + '\\s*\\n(\\s+.*\\n)*', '') }}"
@@ -71,6 +77,7 @@
 
 - name: Generate new SSH config content for {{ host }}
   delegate_to: "{{ host }}"
+  become: true
   become_user: "{{ user }}"
   ansible.builtin.template:
     src: ssh_config.j2
