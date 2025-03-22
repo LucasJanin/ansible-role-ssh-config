@@ -10,7 +10,7 @@ galaxy_info:
   description: Manages SSH configuration files for multiple hosts
   company: lucasjanin.com
   license: MIT
-  min_ansible_version: "2.12"
+  min_ansible_version: "2.11"
   platforms:
     - name: GenericLinux
       versions:
